@@ -8649,7 +8649,7 @@ In this library the device names are the same as the pin names of the symbols, t
 <instance part="GND29" gate="1" x="254" y="71.12"/>
 <instance part="GND30" gate="1" x="274.32" y="68.58"/>
 <instance part="GND31" gate="1" x="274.32" y="17.78"/>
-<instance part="R315" gate="G$1" x="320.04" y="210.82" rot="R90"/>
+<instance part="R315" gate="G$1" x="320.04" y="205.74" rot="R90"/>
 <instance part="TP122" gate="G$1" x="27.94" y="144.78"/>
 <instance part="R1" gate="G$1" x="294.64" y="256.54"/>
 <instance part="R34" gate="G$1" x="332.74" y="236.22" rot="R270"/>
@@ -9763,7 +9763,7 @@ In this library the device names are the same as the pin names of the symbols, t
 <pinref part="U12" gate="B" pin="A1"/>
 <pinref part="R315" gate="G$1" pin="2"/>
 <wire x1="342.9" y1="218.44" x2="320.04" y2="218.44" width="0.1524" layer="91"/>
-<wire x1="320.04" y1="218.44" x2="320.04" y2="215.9" width="0.1524" layer="91"/>
+<wire x1="320.04" y1="218.44" x2="320.04" y2="210.82" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$39" class="0">
@@ -9773,7 +9773,7 @@ In this library the device names are the same as the pin names of the symbols, t
 <wire x1="337.82" y1="170.18" x2="337.82" y2="177.8" width="0.1524" layer="91"/>
 <pinref part="R315" gate="G$1" pin="1"/>
 <wire x1="337.82" y1="177.8" x2="320.04" y2="177.8" width="0.1524" layer="91"/>
-<wire x1="320.04" y1="177.8" x2="320.04" y2="205.74" width="0.1524" layer="91"/>
+<wire x1="320.04" y1="177.8" x2="320.04" y2="200.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MOSI" class="0">
