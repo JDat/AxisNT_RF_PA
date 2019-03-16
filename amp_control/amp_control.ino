@@ -23,20 +23,6 @@ SC18IS602B spiBridge(-1,1,0,0);
 #define READ  3
 #define WRITE 2
 
-char buf [130];
-
-void fill_buffer()
-{
-  buf[0]=READ;
-  buf[1]=0;
-  //buf[2]=0;
-  for (int I=2;I<sizeof(buf);I++)
-  {
-    buf[I]=0xaa;
-  }
-}
-
-
 void changeHCT259pin( uint8_t pin, uint8_t state){
     for ( uint8_t i=0; i<=2; i++ ){
       spiBridge.writeGPIO(HCT259addr[i], (pin & (1<< i) ? HIGH : LOW ) );
@@ -72,57 +58,31 @@ void setup() {
   
   defaultHCT259();
 
-  const int slaveNum = 3;
-  const uint8_t cmd = 0x3;
+  const int slaveNum = 0;
 
   spiBridge.configureSPI(false, SC18IS601B_SPIMODE_0, SC18IS601B_SPICLK_1843_kHz);
 
-  fill_buffer();
+  uint8_t rxBuffer[130];
+  uint8_t txBuffer[2];
+  bool ok=false;
   
-  for (uint8_t j=0; j<=0xf; j++) {
-    //uint8_t spiData[] = { cmd, 0x00, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
-    //uint8_t spiData[] = { 0x05 };
-    //uint8_t spiData[] = { 0x01, 0b10001100 };
-    //uint8_t spiData[] = { READ, 0x0, 0x55, 0 };
-    //spiData[1]= j << 4;
-    uint8_t spiReadBuf[sizeof(buf)];
-  
-    //Serial.println("j=" + String(spiData[1], HEX) );
+  //for (uint8_t j=0; j<=0x1; j++) {
+    txBuffer[0]=READ;
+    txBuffer[1]=0;
 
-
-    //changeHCT259pin( HCT259_EEPROM, LOW);
-    //changeHCT259pin( HCT259_WE, LOW);
-    //bool ok = spiBridge.spiTransfer(slaveNum, byte(WREN));
-    //defaultHCT259();
-    
-    //changeHCT259pin( HCT259_EEPROM, LOW);
-    //changeHCT259pin( HCT259_WE, HIGH);
-    //ok = spiBridge.spiTransfer(slaveNum, buf, sizeof(buf), spiReadBuf);
-    //defaultHCT259();
-
-    //if(ok) {  
-    //  for(size_t i = 0; i < sizeof(buf); i++) {
-    //    Serial.print("SPI wrBuf[" + String(i) + "] = 0x" + String(buf[i], HEX)+"\t");
-    //    Serial.println("readBuf[" + String(i) + "] = 0x" + String(spiReadBuf[i], HEX));
-    //  }
-    //} else {
-    //  Serial.println("SPI transfer failed");
-    //} 
-
-    //buf[0]=READ;
     changeHCT259pin( HCT259_EEPROM, LOW);
-    bool ok = spiBridge.spiTransfer(slaveNum, buf, sizeof(buf), spiReadBuf);
+    ok = spiBridge.spiTransfer(slaveNum, txBuffer, sizeof(txBuffer), rxBuffer, sizeof(rxBuffer) );
     defaultHCT259();
     
     if(ok) {  
-      for(size_t i = 0; i < sizeof(buf); i++) {
-        Serial.print("SPI wrBuf[" + String(i) + "] = 0x" + String(buf[i], HEX)+"\t");
-        Serial.println("SPI readBuf[" + String(i) + "] = 0x" + String(spiReadBuf[i], HEX));
+      for(size_t i = 0; i < sizeof(rxBuffer); i++) {
+        Serial.println("rxBuffer[0x" + String(i, HEX) + "] = 0x" + String(rxBuffer[i], HEX)+";");
       }
+      Serial.println();
     } else {
       Serial.println("SPI transfer failed");
-    }  
-  }
+    }
+  //}
   
 }
 
