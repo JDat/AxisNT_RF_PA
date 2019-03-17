@@ -9,8 +9,9 @@
 #define HCT259_S1     1
 #define HCT259_S2     2
 
-#define HCT259dPin    4
-#define HCT259lePin   3
+#define HCT259dPin    A1
+#define HCT259lePin   A2
+#define ADCconvPin    A3
 
 const uint8_t HCT259addr[]={ HCT259_S0, HCT259_S1, HCT259_S2};
 
