@@ -10091,27 +10091,6 @@ In this library the device names are the same as the pin names of the symbols, t
 <label x="325.12" y="88.9" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="APM2_TR28_TP108_TP32" class="0">
-<segment>
-<pinref part="U1" gate="A" pin="VOUTC"/>
-<wire x1="322.58" y1="91.44" x2="325.12" y2="91.44" width="0.1524" layer="91"/>
-<label x="325.12" y="91.44" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="APM1_TR11_TP84_TP111" class="0">
-<segment>
-<pinref part="U2" gate="A" pin="VOUTD"/>
-<wire x1="322.58" y1="38.1" x2="325.12" y2="38.1" width="0.1524" layer="91"/>
-<label x="325.12" y="38.1" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="APM1_TR12_TP83_TP48" class="0">
-<segment>
-<pinref part="U2" gate="A" pin="VOUTC"/>
-<wire x1="322.58" y1="40.64" x2="325.12" y2="40.64" width="0.1524" layer="91"/>
-<label x="325.12" y="40.64" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
 </nets>
 </sheet>
 </sheets>
