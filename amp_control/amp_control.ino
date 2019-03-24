@@ -128,6 +128,9 @@ void loop() {
   response+=String(PA1Supply())+",";
   response+=String(PA2Supply())+",";
 
+  //response+=String(tSens1.readTemperatureC())+",";
+  response+=String( round(tSens1.readTemperatureC()) )+",";
+  
   response+=String(PA2fwd())+",";
   response+=String(PA1fwd())+",";
 
