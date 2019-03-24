@@ -141,26 +141,39 @@ uint8_t SC18IS602B::spiTransfer(int slaveNum, uint8_t txByte) {
 
 size_t SC18IS602B::i2c_read(uint8_t* readBuf, size_t len) {
     while (Wire.requestFrom(address,len) == 0);
-    return Wire.readBytes(readBuf, len);
+    int i=0;
+    uint8_t j=0;
+    while (Wire.available() || i < len){
+      
+      j=Wire.read();
+      Serial.println("Avail: " + String(i) + "\tReaded: 0x" + String(j, HEX) );
+      readBuf[i]=j;
+      i++;
+    }
+    //return Wire.readBytes(readBuf, len);
+    Serial.println("read ret: " + String(i) );
+    return i;
 }
 
 bool SC18IS602B::spiTransfer(int slaveNum, uint8_t* txData, size_t txLen,
         uint8_t* readBuf) {
     //sanity check
-    if(slaveNum < 0 || slaveNum > 3)
+    if(slaveNum < 0 || slaveNum > 3) {
         return false;
-
+    }
     //Overly long data?
-    if(txLen > SC18IS601B_DATABUFFER_DEPTH)
+    if(txLen > SC18IS601B_DATABUFFER_DEPTH){
         return false;
-
+    }
     //the function ID will have the lower 4 bits set to the
     //activated slave selects. We use only 1 at a time here.
     uint8_t functionID = (1 << slaveNum);
     //transmit our TX buffer
-    if(!this->i2c_write(functionID, txData, txLen))
+    if(!this->i2c_write(functionID, txData, txLen)){
         return false;
+    }
     //read in the data that came from MISO
+    delay(10);
     return i2c_read(readBuf, txLen);
 }
 
