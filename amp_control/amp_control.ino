@@ -2,6 +2,19 @@
 #include "Temperature_LM75_Derived.h"   // https://github.com/jeremycole/Temperature_LM75_Derived
 #include "AD7994.h"
 
+/*
+ * ADC ports
+ * ADC1
+ * ch 1 - Amp1 forward power
+ * ch 2 - Amp1 reflected power
+ * ch 3 - Logic supply ( +6V )
+ * ch 4 - Amp1 HV ( +28V ) supply
+ * ADC2
+ * ch 1 - Amp2 forward power
+ * ch 2 - Amp2 reflected power
+ * ch 3 - Unknown. Maybe logic supply ( +6V ) with big sensitivity
+ * ch 4 - Amp2 HV ( +28V ) supply
+ */
 #define logicSupply() adc1.readADC(3)
 #define PA1Supply()   adc1.readADC(4)
 #define PA2Supply()   adc2.readADC(4)
@@ -12,6 +25,32 @@
 #define PA2fwd()      adc2.readADC(1)
 #define PA2ref()      adc2.readADC(2)
 
+// ADC coeficients
+#define Vref              2.5f      // Measured on ADC pin
+#define logicSupplyCoef   4.91f     // Measured on connector PL3, pin 7
+
+/*
+ * DAC ports
+ * DAC1
+ * ch1 - TR14 3rd stage AB class (higher voltage, have two channels)
+ * ch2 - TR15 3rd stage C class  (lower voltage, have one channel)
+ * ch3 - TR12 2nd stage
+ * ch4 - TR11 1st stage
+ * ch5 -
+ * ch6 -
+ * ch7 - TR14 3rd stage AB class (higher voltage, have two channels)
+ * ch8 -
+ * 
+ * DAC2
+ * ch1 - TR20 3rd stage AB class (higher voltage, have two channels)
+ * ch2 - TR25 3rd stage C class  (lower voltage, have one channel)
+ * ch3 - TR28 2nd stage
+ * ch4 - TR3  1st stage
+ * ch5 -
+ * ch6 -
+ * ch7 - TR20 3rd stage AB class (higher voltage, have two channels)
+ * ch8 -
+ */
 
 #define HCT259_EEPROM 1
 #define HCT259_SYNC1  2
@@ -26,6 +65,8 @@
 #define HCT259lePin   A2
 #define ADCconvPin    A3
 
+#define PTT1Pin       12
+#define PTT2Pin       11
 const uint8_t HCT259addr[]={ HCT259_S0, HCT259_S1, HCT259_S2};
 
 AD7994  adc1(0, ADCconvPin);
@@ -43,7 +84,7 @@ SC18IS602B spiBridge(-1,1,0,0);
 #define WRITE 2
 
 uint8_t slaveNum = 3;
-uint8_t SPImode = SC18IS601B_SPIMODE_3;
+uint8_t SPImode = SC18IS601B_SPIMODE_2;
 uint8_t SPIfrequency = SC18IS601B_SPICLK_1843_kHz;
     
 void changeHCT259pin( uint8_t pin, uint8_t state){
@@ -51,11 +92,11 @@ void changeHCT259pin( uint8_t pin, uint8_t state){
       spiBridge.writeGPIO(HCT259addr[i], (pin & (1<< i) ? HIGH : LOW ) );
     }
     digitalWrite(HCT259dPin, state);
-    delay(1);
+    delayMicroseconds(10);
     digitalWrite(HCT259lePin, LOW);
-    delay(1);
+    delayMicroseconds(10);
     digitalWrite(HCT259lePin, HIGH);
-    delay(1);
+    delayMicroseconds(10);
 }
 
 void defaultHCT259(){
@@ -97,39 +138,77 @@ void setup() {
   
   defaultHCT259();
 
-  //readEEPROM();
-  //EEPROMstatus(0b1111);
-//  Serial.println("Status:\t" + String(EEPROMstatus(-1), HEX) );
+  pinMode(PTT1Pin, OUTPUT);
+  pinMode(PTT2Pin, OUTPUT);
+  digitalWrite(PTT1Pin, HIGH);
+  digitalWrite(PTT2Pin, HIGH); 
 
-  //int address=0x20;
-//  for (int address=0;address<512;address++){
-    //Serial.println();
-    //Serial.println("Addr:\t" + String(address, HEX) + "\t\tData:\t" + String(readEEPROMByte(address), HEX) );
-//  }  
+  resetDAC(3);
+  gainDAC(3, true);
+
 }
 
 String response="";
 
 void loop() {
-  //static uint8_t prevState;
+/*
+  static uint8_t prevState;
   //changeHCT259pin( HCT259_WE, prevState);
-  //Serial.println("Temperature (C):\t" + String(tSens.readTemperatureC()) );
-  //prevState = prevState == HIGH ? LOW : HIGH;
-  //delay(5000);
-  doKurwa();
+
+  // AMP1
+  //writeDAC(1,1,prevState);      //TR14 3rd stage AB class
+  //writeDAC(1,2,prevState);      //TR15 3rd stage C class
+  //writeDAC(1,3,prevState);      //TR12 2nd stage
+  writeDAC(1,4,prevState);      //TR11 1st stage
+  
+  //writeDAC(1,5,prevState);
+  //writeDAC(1,6,prevState);
+  //writeDAC(1,7,prevState);      //TR14 3rd stage AB class
+  //writeDAC(1,8,prevState);
+
+  // AMP2
+  //writeDAC(2,1,prevState);      //TR20 3rd stage AB class
+  //writeDAC(2,2,prevState);      //TR25 3rd stage C class
+  //writeDAC(2,3,prevState);      //TR28 2nd stage
+  writeDAC(2,4,prevState);      //TR3 1st stage
+  
+  //writeDAC(2,5,prevState);
+  //writeDAC(2,6,prevState);
+  //writeDAC(2,7,prevState);      //TR20 3rd stage AB class
+  //writeDAC(2,8,prevState);
+
+//    for (uint8_t j=0; j<255;j++){
+//      //unsigned long a=millis();
+//      writeDAC(1,1,j);
+//      writeDAC(1,7,j);
+//      //Serial.print("Millis: ");
+//      //Serial.println(millis()-a);
+//      Serial.println( "j:\t" + String(j) );
+//  }
+  Serial.print("prevstate: ");
+  Serial.println( prevState );
+  prevState = prevState == 255 ? 0 : 255;
+  delay(5000);
+*/
+  if (Serial.available()) doKurwa();
   
   adc1.doSample();
   adc2.doSample();
 
-  //Serial.println(tSens1.readTemperatureC());
+  sendTelemetry();
+  delay(100);
+}
+
+void sendTelemetry(){
+  const float logicVoltMult = Vref / 4096.0f * logicSupplyCoef;
   response="ADCS,";
-  response+=String(logicSupply())+",";
+  response+=String(logicSupply()*logicVoltMult)+"V,";
   
   response+=String(PA1Supply())+",";
   response+=String(PA2Supply())+",";
 
-  //response+=String(tSens1.readTemperatureC())+",";
-  response+=String( round(tSens1.readTemperatureC()) )+",";
+  //response+=String(tSens1.readTemperatureC())+"C,";
+  response+=String( round(tSens1.readTemperatureC()) )+"C,";
   
   response+=String(PA2fwd())+",";
   response+=String(PA1fwd())+",";
@@ -143,7 +222,6 @@ void loop() {
   
   Serial.println(response);
 }
-
 char checkSum(String theseChars) {
   char check = 0;
   // iterate over the string, XOR each byte with the total sum:
@@ -154,106 +232,89 @@ char checkSum(String theseChars) {
   return check;
 }
 void doKurwa() {
-  bool kurwa=false;
   while (Serial.available() ) {
     Serial.read();
-    kurwa=true;
-  }
-
-  if (kurwa) {
     Serial.println("$Kurwa!*7B");
-  }  
-}
-/*
- * Read one byte from EEPROM
- * Address must be in range 0-511
- */
-int readEEPROMByte(int address){
-  uint8_t tmp;
-
-  spiBridge.configureSPI(false, SPImode, SPIfrequency);
-
-  tmp= READ | (address & 1 <<8) ? 1 << 3 : 0 << 3;
-  changeHCT259pin( HCT259_EEPROM, LOW);
-  
-  if ( !spiBridge.spiTransfer( slaveNum, tmp ) )
-      return -1;
-  if ( !spiBridge.spiTransfer( slaveNum, byte(address) ) )
-      return -1;
-  
-  tmp = spiBridge.spiTransfer( slaveNum, byte(address) );
-  
-  defaultHCT259();
-  return tmp;
-  
-}
-
-/*
- *  Read or write SPI EEPROM status.
- *  To read send in data parameter -1
- *  To write send in data value 0-255 according to EEPROM datashet.
- */
-int EEPROMstatus(int data) {
-  uint8_t cmd;
-
-  uint8_t readBuf[]={0,0,0,0};
-
-  
-  spiBridge.configureSPI(false, SPImode, SPIfrequency);
-  
-  cmd = ( data<0 ) ? RDSR : WRSR;
-  readBuf[0]=cmd;
-  readBuf[1]=data;
-  Serial.println("IN:");
-  Serial.println("P: 0\t0x" + String(byte(readBuf[0]), HEX));
-  Serial.println("P: 1\t0x" + String(byte(readBuf[1]), HEX));
-  Serial.println("P: 2\t0x" + String(byte(readBuf[2]), HEX));
-  Serial.println("P: 3\t0x" + String(byte(readBuf[3]), HEX));
-
-
-  changeHCT259pin( HCT259_EEPROM, LOW);
-  spiBridge.writeGPIO(3, HIGH);
-  if ( spiBridge.spiTransfer( slaveNum, readBuf, 4, readBuf) == false ) {
-      Serial.println("CMD tx");
-      return -1;
   }
-  Serial.println("OUT:");
-  Serial.println("P: 0\t0x" + String(byte(readBuf[0]), HEX));
-  Serial.println("P: 1\t0x" + String(byte(readBuf[1]), HEX));
-  Serial.println("P: 2\t0x" + String(byte(readBuf[2]), HEX));
-  Serial.println("P: 3\t0x" + String(byte(readBuf[3]), HEX));
-  //cmd = spiBridge.spiTransfer( slaveNum, cmd );
-  //cmd = spiBridge.spiTransfer( slaveNum, cmd );
-  //cmd = spiBridge.spiTransfer( slaveNum, cmd );
-  //cmd = spiBridge.spiTransfer( slaveNum, cmd );
-  spiBridge.writeGPIO(3, LOW);
-  defaultHCT259();
-  return cmd;
 }
-void readEEPROM(){
 
-  spiBridge.configureSPI(false, SPImode, SPIfrequency);
+uint8_t DACbuffer[16];
+uint8_t tempBuffer[]={0,0};
+uint8_t tempBuffer2[]={0,0};
+uint16_t temp=0;
 
-  uint8_t rxBuffer[130];
-  uint8_t txBuffer[2];
-  bool ok=false;
+void gainDAC(uint8_t id, bool enable) {
+  tempBuffer[0]=0b10000000;
+  tempBuffer[1]=0b00110000;
+  if (!enable) tempBuffer[1]=0;
   
-  //for (uint8_t j=0; j<=0x1; j++) {
-    txBuffer[0]=READ;
-    txBuffer[1]=0;
+  spiBridge.configureSPI(false, SPImode, SPIfrequency);
+  switch (id) {
+    case 3:
+      changeHCT259pin(HCT259_SYNC1, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();
+      changeHCT259pin(HCT259_SYNC2, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();
+      break;
+    case 2:
+      changeHCT259pin(HCT259_SYNC2, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();    
+      break;
+    case 1:
+      changeHCT259pin(HCT259_SYNC1, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();
+      break;
+  }
+  
+}
+void resetDAC(uint8_t id) {
+  tempBuffer[0]=0b11100000;
+  tempBuffer[1]=0;
+  
+  spiBridge.configureSPI(false, SPImode, SPIfrequency);
+  switch (id) {
+    case 3:
+      changeHCT259pin(HCT259_SYNC1, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();
+      changeHCT259pin(HCT259_SYNC2, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();
+      break;
+    case 2:
+      changeHCT259pin(HCT259_SYNC2, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();
+      break;
+    case 1:
+      changeHCT259pin(HCT259_SYNC1, LOW);
+      spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
+      defaultHCT259();
+      break;
+  }
+}
+void writeDAC(uint8_t idDAC, uint8_t channel, uint8_t value) {
 
-    changeHCT259pin( HCT259_EEPROM, LOW);
-    ok = spiBridge.spiTransfer(slaveNum, txBuffer, sizeof(txBuffer), rxBuffer, sizeof(rxBuffer) );
+
+  DACbuffer[ (idDAC==2 ? 1 : 0) * 8 + (channel-1) ] = value;
+
+  //Serial.println("DAC buf: " + String((idDAC==2 ? 1 : 0)));
+  spiBridge.configureSPI(false, SPImode, SPIfrequency);
+  //for (uint8_t i=0;i<=15;i++){    
+    temp= value << 4;
+    temp+= ( (channel-1) & 0b111) << 12 ;
+    tempBuffer[0]=highByte(temp);
+    tempBuffer[1]=lowByte(temp);
+    //changeHCT259pin( ( i<=7 ? HCT259_SYNC1 : HCT259_SYNC2 ), LOW);
+    //Serial.println("CS: " + String(( idDAC==2 ? HCT259_SYNC2 : HCT259_SYNC1 )));
+    changeHCT259pin( ( idDAC==2 ? HCT259_SYNC2 : HCT259_SYNC1 ), LOW);
+    spiBridge.spiTransfer( slaveNum, tempBuffer, sizeof(tempBuffer), tempBuffer2);
     defaultHCT259();
-    
-    if(ok) {  
-      for(size_t i = 0; i < sizeof(rxBuffer); i++) {
-        Serial.println("rxBuffer[0x" + String(i, HEX) + "] = 0x" + String(rxBuffer[i], HEX)+";");
-      }
-      Serial.println();
-    } else {
-      Serial.println("SPI transfer failed");
-    }
-  //}  
+
+  //}
 }
 

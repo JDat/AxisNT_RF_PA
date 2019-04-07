@@ -127,12 +127,6 @@ void SC18IS602B::begin() {
     Wire.begin();
 }
 
-#ifdef ARDUINO_ARCH_ESP8266
-void SC18IS602B::begin(int sda, int scl) {
-    Wire.begin(sda, scl);
-}
-#endif
-
 uint8_t SC18IS602B::spiTransfer(int slaveNum, uint8_t txByte) {
     uint8_t readBuf = 0;
     this->spiTransfer(slaveNum, &txByte, 1, &readBuf);
@@ -146,12 +140,12 @@ size_t SC18IS602B::i2c_read(uint8_t* readBuf, size_t len) {
     while (Wire.available() || i < len){
       
       j=Wire.read();
-      Serial.println("Avail: " + String(i) + "\tReaded: 0x" + String(j, HEX) );
+      //Serial.println("Avail: " + String(i) + "\tReaded: 0x" + String(j, HEX) );
       readBuf[i]=j;
       i++;
     }
     //return Wire.readBytes(readBuf, len);
-    Serial.println("read ret: " + String(i) );
+    //Serial.println("read ret: " + String(i) );
     return i;
 }
 
@@ -173,7 +167,7 @@ bool SC18IS602B::spiTransfer(int slaveNum, uint8_t* txData, size_t txLen,
         return false;
     }
     //read in the data that came from MISO
-    delay(10);
+    delayMicroseconds(10);
     return i2c_read(readBuf, txLen);
 }
 
