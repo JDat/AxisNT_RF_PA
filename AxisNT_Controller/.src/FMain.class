@@ -1,0 +1,76 @@
+' Gambas class file
+
+Public Sub btnPTT1_MouseUp()
+  If chkLatch.Value = False Then
+    btnPTT1.Value = True
+  Endif
+  
+  If chkLink.Value = True Then
+    btnPTT2.Value = Not btnPTT1.Value
+  Endif
+End
+
+Public Sub btnPTT1_MouseDown()
+  If chkLink.Value = True Then
+    btnPTT2.Value = Not btnPTT1.Value
+  Endif
+End
+
+Public Sub btnPTT2_MouseUp()
+  If chkLatch.Value = False Then
+    btnPTT2.Value = True
+  Endif
+  
+  If chkLink.Value = True Then
+    btnPTT1.Value = Not btnPTT2.Value
+  Endif
+End
+
+Public Sub btnPTT2_MouseDown()
+  If chkLink.Value = True Then
+    btnPTT1.Value = Not btnPTT2.Value
+  Endif
+End
+
+Public Sub btnStop_Click()
+  btnPTT1.Value = False
+  btnPTT2.Value = False
+End
+
+Public Sub ser_Read()
+  Debug ser.ReadLine
+End
+
+Public Sub Form_Open()
+  serReconnect()
+End
+
+Public Sub txtPort_LostFocus()
+  serReconnect()
+End
+
+Public Sub Timer1_Timer()
+
+  'btnPTT2.Value = Not btnPTT2.Value
+  'Debug btnPTT1.Value, btnPTT2.Value
+  'Debug chkLatch.Value
+
+End
+
+Public Sub txtPort_KeyPress()
+  If Key.code = Key.Return Then
+    serReconnect()
+  Endif
+End
+
+Private oldPortName As String
+
+Public Sub serReconnect()
+  If oldPortName <> txtPort.Text
+    ser.Close
+    ser.PortName = txtPort.Text
+    oldPortName = txtPort.Text
+    Try ser.Open
+    Debug Now(), "Try open"
+  Endif
+End

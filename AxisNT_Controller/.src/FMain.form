@@ -1,0 +1,243 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,93,58)
+  Resizable = False
+  { PictureBox1 PictureBox
+    MoveScaled(6,10,58,19)
+    Picture = Picture["AxisNT_PA.svg"]
+  }
+  { PictureBox2 PictureBox
+    MoveScaled(6,38,58,19)
+    Picture = Picture["AxisNT_PA.svg"]
+  }
+  { SpinA1S1 SpinBox
+    MoveScaled(4,8,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { SpinA1S2 SpinBox
+    MoveScaled(12,8,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { SpinA1SAB1 SpinBox
+    MoveScaled(24,4,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { SpinA1SAB2 SpinBox
+    MoveScaled(33,4,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { chkA1sum CheckBox
+    MoveScaled(30,1,9,3)
+    Text = ("SUM")
+  }
+  { SpinA1SC SpinBox
+    MoveScaled(40,22,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { lblA1fwd Label
+    MoveScaled(48,11,14,4)
+    Font = Font["Bold,+3"]
+    Text = ("30.5 dBm")
+  }
+  { lblA1refl Label
+    MoveScaled(50,26,14,4)
+    Font = Font["Bold,+3"]
+    Text = ("30.5 dBm")
+  }
+  { lblA1VCC Label
+    MoveScaled(13,3,10,4)
+    Font = Font["Bold,+3"]
+    Text = ("28.58V")
+    Alignment = Align.Left
+  }
+  { SpinA2S1 SpinBox
+    MoveScaled(4,36,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { SpinA2SAB2 SpinBox
+    MoveScaled(34,32,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { chkA2sum CheckBox
+    MoveScaled(31,29,9,3)
+    Text = ("SUM")
+  }
+  { SpinA2SC SpinBox
+    MoveScaled(40,50,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { lblA2fwd Label
+    MoveScaled(48,39,14,4)
+    Font = Font["Bold,+3"]
+    Text = ("30.5 dBm")
+  }
+  { lblA2refl Label
+    MoveScaled(50,54,14,4)
+    Font = Font["Bold,+3"]
+    Text = ("30.5 dBm")
+  }
+  { SpinA2S2 SpinBox
+    MoveScaled(12,36,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { SpinA2SAB1 SpinBox
+    MoveScaled(25,32,8,6)
+    Font = Font["Bold,+3"]
+    MaxValue = 255
+  }
+  { Label9 Label
+    MoveScaled(68,15,9,4)
+    Font = Font["Bold,+3"]
+    Text = ("Logic:")
+    Alignment = Align.Right
+  }
+  { lblctrlVCC Label
+    MoveScaled(79,15,10,4)
+    Font = Font["Bold,+3"]
+    Text = ("6.05V")
+    Alignment = Align.Left
+  }
+  { Label11 Label
+    MoveScaled(68,18,9,4)
+    Font = Font["Bold,+3"]
+    Text = ("Temp:")
+    Alignment = Align.Right
+  }
+  { lbltemperature Label
+    MoveScaled(78,18,10,4)
+    Font = Font["Bold,+3"]
+    Text = ("45.3 C")
+    Alignment = Align.Left
+  }
+  { chkLink CheckBox
+    MoveScaled(65,30,7,3)
+    Text = ("Link")
+  }
+  { txtPort TextBox
+    MoveScaled(51,5,14,4)
+    Text = ("/dev/ttyUSB0")
+  }
+  { Label13 Label
+    MoveScaled(43,5,7,4)
+    Font = Font["Bold,+3"]
+    Text = ("Port:")
+    Alignment = Align.Right
+  }
+  { btnA1store Button
+    MoveScaled(14,22,12,6)
+    Font = Font["Bold,+3"]
+    ToolTip = ("Store into Arduino EEPROM")
+    Text = ("Store1")
+  }
+  { btnA2store Button
+    MoveScaled(14,50,12,6)
+    Font = Font["Bold,+3"]
+    ToolTip = ("Store into Arduino EEPROM")
+    Text = ("Store2")
+  }
+  { btnStop Button
+    MoveScaled(80,28,12,6)
+    Font = Font["Bold,+3"]
+    ToolTip = ("[ESC] Stop all!")
+    Text = ("STOP")
+    Cancel = True
+  }
+  { chkLatch CheckBox
+    MoveScaled(72,30,8,3)
+    ToolTip = ("PTT latching")
+    Text = ("Latch")
+  }
+  { Label7 Label
+    MoveScaled(5,31,8,4)
+    Font = Font["Bold,+3"]
+    Text = ("VCC2:")
+    Alignment = Align.Right
+  }
+  { lblA2VCC Label
+    MoveScaled(14,31,10,4)
+    Font = Font["Bold,+3"]
+    Text = ("28.58V")
+    Alignment = Align.Left
+  }
+  { btnA1recall Button
+    MoveScaled(1,22,12,6)
+    Font = Font["Bold,+3"]
+    ToolTip = ("Read from Arduino EEPROM")
+    Text = ("Recall1")
+  }
+  { btnA2recall Button
+    MoveScaled(1,50,12,6)
+    Font = Font["Bold,+3"]
+    ToolTip = ("Read from Arduino EEPROM")
+    Text = ("Recall2")
+  }
+  { btnPTT1 ToggleButton
+    MoveScaled(65,23,12,6)
+    Font = Font["Bold,+3"]
+    ToolTip = ("Enable AMP1")
+    Text = ("PTT1")
+  }
+  { btnPTT2 ToggleButton
+    MoveScaled(65,34,12,6)
+    Font = Font["Bold,+3"]
+    Text = ("PTT2")
+  }
+  { Label3 Label
+    MoveScaled(4,3,8,4)
+    Font = Font["Bold,+3"]
+    Text = ("VCC1:")
+    Alignment = Align.Right
+  }
+  { chkA1boost1 CheckBox
+    MoveScaled(67,2,9,3)
+    Text = ("Boost1")
+  }
+  { chkA1boost2 CheckBox
+    MoveScaled(67,5,9,3)
+    Text = ("Boost2")
+  }
+  { chkA1V1 CheckBox
+    MoveScaled(77,2,6,3)
+    Text = ("V1")
+  }
+  { chkA1V2 CheckBox
+    MoveScaled(77,5,6,3)
+    Text = ("V2")
+  }
+  { chkA2boost1 CheckBox
+    MoveScaled(65,45,9,3)
+    Text = ("Boost1")
+  }
+  { chkA2boost2 CheckBox
+    MoveScaled(65,48,9,3)
+    Text = ("Boost2")
+  }
+  { chkA2V1 CheckBox
+    MoveScaled(75,45,6,3)
+    Text = ("V1")
+  }
+  { chkA2V2 CheckBox
+    MoveScaled(75,48,6,3)
+    Text = ("V2")
+  }
+  { ser #SerialPort
+    #MoveScaled(84,50)
+    FlowControl = SerialPort.None
+    Speed = 115200
+  }
+  { Timer1 #Timer
+    #MoveScaled(85,39)
+    Enabled = True
+    Delay = 333
+  }
+}
