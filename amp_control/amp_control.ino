@@ -3,6 +3,21 @@
 #include "AD7994.h"
 
 /*
+ * Serial commands
+ * from arduino:
+ * $ADC status
+ * $DAC status
+ * $EEPROM contents
+ * $KURWA
+ * From PC:
+ * $Get EEPROM contents
+ * $Store DAC values to EEPROM
+ * $Configure DAC
+ * $Set DAC values
+ * $PTT - push to talk
+ */
+ 
+/*
  * ADC ports
  * ADC1
  * ch 1 - Amp1 forward power

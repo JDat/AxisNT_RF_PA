@@ -51,10 +51,6 @@ End
 
 Public Sub Timer1_Timer()
 
-  'btnPTT2.Value = Not btnPTT2.Value
-  'Debug btnPTT1.Value, btnPTT2.Value
-  'Debug chkLatch.Value
-
 End
 
 Public Sub txtPort_KeyPress()
