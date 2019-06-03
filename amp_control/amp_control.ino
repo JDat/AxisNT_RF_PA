@@ -1,6 +1,7 @@
 #include "Temperature_LM75_Derived.h"   // https://github.com/jeremycole/Temperature_LM75_Derived
 #include "AD7994.h"
 #include "AD5308_DAC.h"
+#include <EEPROM.h>
 
 /*
  * Serial commands
@@ -55,6 +56,32 @@ AD7994  adc2(1, ADCconvPin);
 
 Generic_LM75 tSens1(0x4A);
 
+enum eepromStructure{
+  DAC1_CH1,
+  DAC1_CH2,
+  DAC1_CH3,
+  DAC1_CH4,
+  DAC1_CH5,
+  DAC1_CH6,
+  DAC1_CH7,
+  DAC1_CH8,
+  DAC1_GAIN,
+
+  DAC2_CH1,
+  DAC2_CH2,
+  DAC2_CH3,
+  DAC2_CH4,
+  DAC2_CH5,
+  DAC2_CH6,
+  DAC2_CH7,
+  DAC2_CH8,
+  DAC2_GAIN,
+
+  eeCheckSum
+} ee;
+
+uint8_t DACstruct[eeCheckSum];
+
 void setup() {
   Serial.begin(115200);
 
@@ -74,8 +101,8 @@ void setup() {
   digitalWrite(PTT1Pin, HIGH);
   digitalWrite(PTT2Pin, HIGH);
 
-  void setupDAC();
-  
+  setupDAC();
+  //Serial.println(sizeof(DACstruct));
 }
 
 String response="";
@@ -84,7 +111,7 @@ void loop() {
 
   static uint8_t prevState;
   //changeHCT259pin( HCT259_WE, prevState);
-
+/*
   // AMP1
   //writeDAC(1,1,prevState);      //TR14 3rd stage AB class
   //writeDAC(1,2,prevState);      //TR15 3rd stage C class
@@ -106,22 +133,20 @@ void loop() {
   //writeDAC(2,6,prevState);
   //writeDAC(2,7,prevState);      //TR20 3rd stage AB class
   //writeDAC(2,8,prevState);
+*/
 
 //    for (uint8_t j=0; j<255;j++){
-//      //unsigned long a=millis();
 //      writeDAC(1,1,j);
 //      writeDAC(1,7,j);
-//      //Serial.print("Millis: ");
-//      //Serial.println(millis()-a);
-//      Serial.println( "j:\t" + String(j) );
 //  }
+
   Serial.print("prevstate: ");
   Serial.println( prevState );
   prevState = prevState == 255 ? 0 : 255;
-  delay(5000);
+  //delay(5000);
 
 
-  if (Serial.available()) doKurwa();
+  //if (Serial.available()) doKurwa();
   
   adc1.doSample();
   adc2.doSample();
